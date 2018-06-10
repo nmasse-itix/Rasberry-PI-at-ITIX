@@ -8,7 +8,7 @@
 - name: 'Fetch the pi-hole installer'
   get_url:
       dest: /usr/local/src/pi-hole/basic-install.sh
-      url: https://raw.githubusercontent.com/pi-hole/pi-hole/{{ pihole_version }}/automated%20install/basic-install.sh
+      url: '{{ pihole_installer_url }}'
       validate_certs: yes
       sha256sum: '{{ pihole_installer_sha256sum|default(omit) }}'
       mode: 0755

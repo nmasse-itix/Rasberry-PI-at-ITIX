@@ -1,6 +1,5 @@
 ---
-pihole_version: v3.3.1
-pihole_installer_sha256sum: cafa86b43a496dad113eac4afe1ce89eed0ada3f9a555e2d8c1742d60d1d11f2
+pihole_installer_url: https://install.pi-hole.net
 pihole_query_logging_enabled: yes
 pihole_webadmin_enabled: yes
 pihole_lighttpd_enabled: yes
