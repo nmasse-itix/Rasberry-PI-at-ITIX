@@ -1,0 +1,49 @@
+---
+
+- name: Create a folder for the pi-hole installer
+  file:
+    path: /usr/local/src/pi-hole
+    state: directory
+
+- name: 'Fetch the pi-hole installer'
+  get_url:
+      dest: /usr/local/src/pi-hole/basic-install.sh
+      url: https://raw.githubusercontent.com/pi-hole/pi-hole/{{ pihole_version }}/automated%20install/basic-install.sh
+      validate_certs: yes
+      sha256sum: '{{ pihole_installer_sha256sum|default(omit) }}'
+      mode: 0755
+  register: pihole_installer
+
+- name: 'Make sure /etc/pihole exists'
+  file:
+    state: directory
+    path: /etc/pihole
+    owner: root
+    group: root
+    mode: 0755
+
+- name: 'Generate the pi-hole unattended installation script'
+  template:
+    src: setupVars.conf.j2
+    dest: /etc/pihole/setupVars.conf
+    owner: root
+    group: root
+    mode: 0644
+  register: pihole_config
+
+- name: Run the pi-hole installer
+  command: /usr/local/src/pi-hole/basic-install.sh --unattended
+  when: pihole_config.changed or pihole_installer.changed
+
+- name: Fix dnsmasq logfile ownership
+  file:
+    path: /var/log/pihole.log
+    setype: dnsmasq_var_log_t
+    seuser: system_u
+  register: log_file_permissions
+
+- name: Restart dnsmasq
+  service: 
+    name: dnsmasq
+    state: restarted
+  when: log_file_permissions.changed

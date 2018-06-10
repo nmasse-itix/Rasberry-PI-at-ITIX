@@ -1,0 +1,22 @@
+PIHOLE_INTERFACE={{ ansible_default_ipv4.interface }}
+{% if "address" in ansible_default_ipv4 %}
+IPV4_ADDRESS={{ ansible_default_ipv4.address }}/{{ ansible_default_ipv4.netmask|ipaddr('prefix') }}
+{% else %}
+IPV4_ADDRESS=
+{% endif %}
+{% if "address" in ansible_default_ipv6 %}
+IPV6_ADDRESS={{ ansible_default_ipv6.address }}/{{ ansible_default_ipv6.netmask|ipaddr('prefix') }}
+{% else %}
+IPV6_ADDRESS=
+{% endif %}
+{% for pihole_dns_ipaddress in ansible_dns.nameservers|default([]) %}
+PIHOLE_DNS_{{loop.index}}={{ pihole_dns_ipaddress }}
+{% endfor %}
+QUERY_LOGGING={{ pihole_query_logging_enabled|bool|ternary('true', 'false') }}
+INSTALL_WEB={{ pihole_webadmin_enabled|bool|ternary('true', 'false') }}
+LIGHTTPD_ENABLED={{ pihole_lighttpd_enabled|bool|ternary('1', '0') }}
+{% if pihole_webadmin_password is defined %}
+WEBPASSWORD={{ pihole_webadmin_password|hash('sha256')|hash('sha256') }}
+{% elif pihole_webadmin_password_hash is defined %}
+WEBPASSWORD={{ pihole_webadmin_password_hash }}
+{% endif %}

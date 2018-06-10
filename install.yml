@@ -1,0 +1,9 @@
+---
+
+- name: Install and configure my Raspberry PI
+  hosts: rpi
+  become: yes
+  roles:
+  - base
+  - pihole
+  

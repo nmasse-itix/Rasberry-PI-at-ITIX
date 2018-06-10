@@ -1,0 +1,6 @@
+[rpi]
+raspberry-pi.itix.fr
+
+[rpi:vars]
+pihole_webadmin_enabled=no
+pihole_lighttpd_enabled=no
